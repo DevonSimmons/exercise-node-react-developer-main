@@ -35,9 +35,12 @@ repos.get('/', async (_: Request, res: Response) => {
   //Create jumbo array
   const aggregateArray = reposData.concat(localReposData);
 
+  const filteredAggregateArray = aggregateArray.filter(
+    (obj) => obj.fork === false
+  );
   res.status(200);
 
   // TODO: See README.md Task (A). Return repo data here. You’ve got this!
   //Return array here
-  res.json(aggregateArray);
+  res.json(filteredAggregateArray);
 });
