@@ -1,7 +1,6 @@
+import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { format } from 'date-fns';
 import './App.css';
-
 interface RepoProperties {
   name: string;
   description: string;
@@ -9,6 +8,8 @@ interface RepoProperties {
   forks: number;
   // eslint-disable-next-line @typescript-eslint/naming-convention
   created_at: number;
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  updated_at: number;
 }
 
 export function App() {
@@ -20,27 +21,47 @@ export function App() {
     repos();
   }, []);
 
+  //Fetch api data
   const repos = async () => {
     const response = await fetch(repoAPI);
-
     setName(await response.json());
   };
+
   //Sort array by date in reverse-chronological order
- 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const formatDate = name.map((data) => {
+    const newArray = moment(data.created_at).format('yyyy.MM.dd, h:mm:ss a');
+    return {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      ...data,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      created_at: newArray,
+    };
+  });
+
+  const sortedArray = formatDate
+    .sort((a, b) => {
+      return parseInt(b.created_at, 10) - parseInt(a.created_at, 10);
+    })
+    .reverse();
 
   return (
     <div className="App">
       <header className="App-header">
         <ol>
-          {name.map((data) => {
+          {sortedArray.map((data) => {
             return (
               <div key={data.created_at}>
                 <li key={data.created_at}>
-                  <h2>Name: {data.name}</h2>
-                  <p>Description: {data.description}</p>
-                  <p>Language: {data.language}</p>
-                  <p>Forks: {data.forks}</p>
-                  <p>Created: {data.created_at}</p>
+                  {
+                    <>
+                      <h2>Name: {data.name}</h2>
+                      <p>Description: {data.description}</p>
+                      <p>Language: {data.language}</p>
+                      <p>Forks: {data.forks}</p>
+                      <p>Created: {data.created_at}</p>
+                    </>
+                  }
                 </li>
               </div>
             );
