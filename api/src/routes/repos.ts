@@ -10,12 +10,19 @@ const LOCAL_REPOS = 'data/repos.json';
 
 //method for pulling data from repos api
 async function getAPIRepos() {
-  return axios.get(REPOS_API).then(function (response) {
-    //Assigning type
-    const data: Repo[] = response.data;
+  return axios
+    .get(REPOS_API)
+    .then(function (response) {
+      //Assigning type
+      const data: Repo[] = response.data;
 
-    return data;
-  });
+      return data;
+    })
+    .catch((e: any) => {
+      // eslint-disable-next-line no-console
+      console.error(e);
+      return [] as Repo[];
+    });
 }
 //Get local repo data from repos.json
 async function getLocalRepos() {
