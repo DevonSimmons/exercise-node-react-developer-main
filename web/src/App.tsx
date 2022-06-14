@@ -12,8 +12,10 @@ export function App() {
   const [name, setName] = useState<Repo[]>([]);
   const [repoData, setRepoData] = useState<Commit[]>([]);
   const [readMe, setReadMe] = useState<any>(null);
+  //Sets the filter for the list of arrays
   const [filter, setFilter] = useState('');
   const [open, setOpen] = useState(false);
+  //When div is clicked, handle open passes the data to the modal
   const handleOpen = (data: Repo) => {
     getRepoData(data);
     getReadMe(data);
@@ -28,12 +30,14 @@ export function App() {
     const response = await fetch(repoAPI);
     setName(await response.json());
   };
+  //Fetch repo data
   const getRepoData = async (data: Repo) => {
     const response = await fetch(
       'https://api.github.com/repos/' + data.full_name + '/commits'
     );
     setRepoData(await response.json());
   };
+  //Gets README for repo
   const getReadMe = async (data: Repo) => {
     const response = await fetch(
       `https://raw.githubusercontent.com/${data.full_name}/master/README.md`
@@ -75,14 +79,14 @@ export function App() {
     }
   });
 
-  //Display data within
+  //Display data for modal
   function displayData() {
     if (repoData != null && repoData.length > 0) {
       return (
         <>
-          <p>{repoData[0].commit.author.name}</p>
-          <p>{repoData[0].commit.author.date}</p>
-          <p>{repoData[0].commit.message}</p>
+          <p>Author: {repoData[0].commit.author.name}</p>
+          <p>Last commit date: {repoData[0].commit.author.date}</p>
+          <p>Message: {repoData[0].commit.message}</p>
         </>
       );
     } else {
@@ -93,7 +97,7 @@ export function App() {
       );
     }
   }
-  //Check if read me exists and display if so
+  //Check if read me exists and display if it does
   function displayReadme() {
     if (readMe != null) {
       return <Markdown>{readMe}</Markdown>;
@@ -112,6 +116,7 @@ export function App() {
       <header className="App-header">
         <div>
           <span>
+            <h1>Silver Orange Repositories</h1>
             <p>Filter by Language</p>
             <select defaultValue="" onChange={handleChange}>
               <option value="">Default</option>
@@ -142,7 +147,11 @@ export function App() {
           })}
           <Modal className="modal" open={open}>
             <>
-              <Button variant="contained" onClick={() => handleClose()}>
+              <Button
+                variant="contained"
+                className="close-btn"
+                onClick={() => handleClose()}
+              >
                 Close
               </Button>
               <div className="modal-content">{displayData()}</div>
